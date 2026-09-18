@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crazy Cravings — Ice Cream Day Sign-Up</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --pink: #ec1568;
+    --pink-deep: #c20f57;
+    --orange: #ff9f1c;
+    --cream: #fff8f1;
+    --ink: #3a2233;
+    --ink-soft: #6b5461;
+    --line: #f0ddd1;
+    --ok: #1f9d55;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background: radial-gradient(circle at 100% 0%, #ffcf6b 0%, #ff9f1c 28%, #f4408a 62%, #c20f57 100%);
+    min-height: 100vh;
+    padding: 28px 16px 60px;
+  }
+
+  .wrap{
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .hero{
+    text-align: center;
+    color: #fff;
+    margin-bottom: 22px;
+  }
+
+  .hero .brand{
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 34px;
+    line-height: 1;
+    text-shadow: 0 3px 0 rgba(0,0,0,0.08);
+  }
+
+  .hero .event{
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin-top: 6px;
+    opacity: 0.95;
+  }
+
+  .card{
+    background: var(--cream);
+    border-radius: 22px;
+    box-shadow: 0 18px 40px rgba(90, 10, 50, 0.25);
+    overflow: hidden;
+  }
+
+  .tabs{
+    display: flex;
+  }
+
+  .tab{
+    flex: 1;
+    padding: 16px 10px;
+    text-align: center;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    background: #f6e6da;
+    color: var(--ink-soft);
+    border: none;
+    cursor: pointer;
+  }
+
+  .tab.active{
+    background: var(--cream);
+    color: var(--pink-deep);
+  }
+
+  .panel{
+    padding: 26px 26px 30px;
+  }
+
+  .panel.hidden{ display:none; }
+
+  label{
+    display:block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 6px;
+    margin-top: 18px;
+    color: var(--ink);
+  }
+
+  label:first-of-type{ margin-top: 0; }
+
+  input[type=text], select{
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  input[type=text]:focus, select:focus{
+    outline: none;
+    border-color: var(--pink);
+  }
+
+  .dairy-note{
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  .submit-btn{
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: var(--pink);
+    color: #fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .submit-btn:hover{ background: var(--pink-deep); }
+  .submit-btn:disabled{ background: #d9b9c6; cursor: default; }
+
+  .confirm{
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: #e8f7ee;
+    color: var(--ok);
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+  }
+
+  .confirm.show{ display:block; }
+
+  .list-head{
+    display:flex;
+    align-items:baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .list-head h2{
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 18px;
+    margin: 0;
+    color: var(--pink-deep);
+  }
+
+  .count-pill{
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+
+  th, td{
+    text-align: left;
+    padding: 10px 8px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  th{
+    font-family: 'Baloo 2', sans-serif;
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .remove-link{
+    color: var(--ink-soft);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .empty-state{
+    text-align:center;
+    color: var(--ink-soft);
+    padding: 30px 10px;
+    font-size: 14px;
+  }
+
+  .export-btn{
+    margin-top: 22px;
+    width: 100%;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1.5px solid var(--pink);
+    background: #fff;
+    color: var(--pink-deep);
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .export-btn:hover{ background: #fdeef3; }
+
+  .footnote{
+    text-align:center;
+    color: rgba(255,255,255,0.85);
+    font-size: 12px;
+    margin-top: 18px;
+  }
+
+  /* ---------- Print / PDF export ---------- */
+  #print-sheet{ display:none; }
+
+  @media print{
+    body{ background: #fff; padding: 0; }
+    .wrap > .hero, .card{ display:none !important; }
+    #print-sheet{
+      display:block;
+      font-family: 'Inter', sans-serif;
+      color: #222;
+      padding: 20px 30px;
+    }
+    #print-sheet h1{
+      font-family: 'Baloo 2', sans-serif;
+      color: var(--pink-deep);
+      margin-bottom: 2px;
+    }
+    #print-sheet .sub{
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+    #print-sheet table{ width:100%; border-collapse: collapse; }
+    #print-sheet th, #print-sheet td{
+      border-bottom: 1px solid #ddd;
+      padding: 7px 6px;
+      font-size: 13px;
+      text-align: left;
+    }
+    #print-sheet th{ color: #888; font-weight: 600; }
+    #print-sheet .summary{
+      margin-top: 26px;
+      font-size: 13px;
+    }
+    #print-sheet .summary h2{
+      font-family: 'Baloo 2', sans-serif;
+      font-size: 15px;
+      color: var(--pink-deep);
+      margin-bottom: 8px;
+    }
+    #print-sheet .summary div{ margin-bottom: 3px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="brand">Crazy Cravings</div>
+    <div class="event">Ice Cream Day — Flavour Sign-Up</div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" id="tabSignup" onclick="showPanel('signup')">Sign Up</button>
+      <button class="tab" id="tabList" onclick="showPanel('list')">Team List</button>
+    </div>
+
+    <div class="panel" id="panelSignup">
+      <label for="fName">Full Name</label>
+      <input type="text" id="fName" placeholder="e.g. Jordan Reeves" autocomplete="off">
+
+      <label for="fFlavour">Flavour Choice</label>
+      <select id="fFlavour"></select>
+      <div class="dairy-note">Rainbow Sorbet and Peach Sorbet are dairy-free.</div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitEntry()">Save My Pick</button>
+      <div class="confirm" id="confirmMsg"></div>
+    </div>
+
+    <div class="panel hidden" id="panelList">
+      <div id="lockGate" style="padding: 6px 0 4px;">
+        <label for="adminPass" style="margin-top:0;">Team access password</label>
+        <input type="text" id="adminPass" placeholder="Enter password" autocomplete="off" onkeydown="if(event.key==='Enter'){checkPassword();}">
+        <button class="submit-btn" onclick="checkPassword()">Unlock</button>
+        <div class="confirm" id="lockMsg" style="color:#c0392b;"></div>
+      </div>
+
+      <div id="listContent" class="hidden">
+        <div class="list-head">
+          <h2>Who's signed up</h2>
+          <span class="count-pill" id="countPill">0 people</span>
+        </div>
+        <div id="listBody"></div>
+        <button class="export-btn" onclick="window.print()">Export to PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">Responses are shared with the whole team so we know exactly what to pre-scoop.</div>
+</div>
+
+<!-- Clean printable version, shown only when printing/exporting to PDF -->
+<div id="print-sheet">
+  <h1>Crazy Cravings — Ice Cream Day</h1>
+  <div class="sub">Flavour sign-up list</div>
+  <table>
+    <thead><tr><th>#</th><th>Name</th><th>Flavour</th></tr></thead>
+    <tbody id="printRows"></tbody>
+  </table>
+  <div class="summary">
+    <h2>Flavours to pre-scoop</h2>
+    <div id="printSummary"></div>
+  </div>
+</div>
+
+<script>
+  const FLAVOURS = [
+    "Banana","Birthday Cake","Bordeaux Cherry","Bubblegum","Chocolate",
+    "Chocolate Peanut Butter","Coconut","Cookie Dough","Cookies and Cream",
+    "Cotton Candy","Mango","Maple Walnut","Mint Chip","Moose Tracks",
+    "Muskoka Mocha","Orange Pineapple","Pistachio","Pralines and Cream",
+    "Rainbow Sorbet (Dairy-Free)","Raspberry Lemon Lime","Raspberry Thunder",
+    "Salty Caramel","Strawberry","Vanilla","Peach Sorbet (Dairy-Free)"
+  ];
+
+  const select = document.getElementById('fFlavour');
+  FLAVOURS.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f;
+    opt.textContent = f;
+    select.appendChild(opt);
+  });
+
+  function showPanel(which){
+    const signupPanel = document.getElementById('panelSignup');
+    const listPanel = document.getElementById('panelList');
+    const tabSignup = document.getElementById('tabSignup');
+    const tabList = document.getElementById('tabList');
+
+    if(which === 'signup'){
+      signupPanel.classList.remove('hidden');
+      listPanel.classList.add('hidden');
+      tabSignup.classList.add('active');
+      tabList.classList.remove('active');
+    } else {
+      signupPanel.classList.add('hidden');
+      listPanel.classList.remove('hidden');
+      tabList.classList.add('active');
+      tabSignup.classList.remove('active');
+      if(unlocked){
+        loadEntries();
+      }
+    }
+  }
+
+  const TEAM_PASSWORD = 'crazy@admin';
+  let unlocked = false;
+
+  function checkPassword(){
+    const input = document.getElementById('adminPass');
+    const msg = document.getElementById('lockMsg');
+    if(input.value === TEAM_PASSWORD){
+      unlocked = true;
+      document.getElementById('lockGate').classList.add('hidden');
+      document.getElementById('listContent').classList.remove('hidden');
+      loadEntries();
+    } else {
+      msg.textContent = 'Wrong password, try again.';
+      msg.classList.add('show');
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  async function submitEntry(){
+    const nameInput = document.getElementById('fName');
+    const name = nameInput.value.trim();
+    const flavour = select.value;
+    const btn = document.getElementById('submitBtn');
+    const confirmMsg = document.getElementById('confirmMsg');
+
+    if(!name){
+      nameInput.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+
+    try{
+      const key = 'entry:' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+      const result = await window.storage.set(key, JSON.stringify({ name, flavour }), true);
+      if(!result){ throw new Error('Save failed'); }
+
+      confirmMsg.textContent = "You're in! " + name + " → " + flavour;
+      confirmMsg.classList.add('show');
+      nameInput.value = '';
+      select.selectedIndex = 0;
+    } catch(err){
+      confirmMsg.textContent = "Something went wrong saving your pick. Please try again.";
+      confirmMsg.style.color = '#c0392b';
+      confirmMsg.classList.add('show');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save My Pick';
+    }
+  }
+
+  async function fetchAllEntries(){
+    const listing = await window.storage.list('entry:', true);
+    const keys = (listing && listing.keys) || [];
+    const entries = [];
+    for(const k of keys){
+      try{
+        const r = await window.storage.get(k, true);
+        if(r && r.value){
+          const parsed = JSON.parse(r.value);
+          entries.push({ key: k, name: parsed.name, flavour: parsed.flavour });
+        }
+      } catch(e){ /* skip unreadable entry */ }
+    }
+    entries.sort((a,b) => a.name.localeCompare(b.name));
+    return entries;
+  }
+
+  async function loadEntries(){
+    const listBody = document.getElementById('listBody');
+    const countPill = document.getElementById('countPill');
+    listBody.innerHTML = '<div class="empty-state">Loading...</div>';
+
+    const entries = await fetchAllEntries();
+
+    countPill.textContent = entries.length + (entries.length === 1 ? ' person' : ' people');
+
+    if(entries.length === 0){
+      listBody.innerHTML = '<div class="empty-state">No one has signed up yet.</div>';
+      renderPrintSheet([]);
+      return;
+    }
+
+    let html = '<table><thead><tr><th>Name</th><th>Flavour</th><th></th></tr></thead><tbody>';
+    entries.forEach(e => {
+      html += '<tr><td>' + escapeHtml(e.name) + '</td><td>' + escapeHtml(e.flavour) + '</td>' +
+              '<td><span class="remove-link" onclick="removeEntry(\'' + e.key + '\')">remove</span></td></tr>';
+    });
+    html += '</tbody></table>';
+    listBody.innerHTML = html;
+
+    renderPrintSheet(entries);
+  }
+
+  async function removeEntry(key){
+    try{
+      await window.storage.delete(key, true);
+      loadEntries();
+    } catch(e){ console.error(e); }
+  }
+
+  function renderPrintSheet(entries){
+    const printRows = document.getElementById('printRows');
+    const printSummary = document.getElementById('printSummary');
+
+    printRows.innerHTML = entries.map((e, i) =>
+      '<tr><td>' + (i+1) + '</td><td>' + escapeHtml(e.name) + '</td><td>' + escapeHtml(e.flavour) + '</td></tr>'
+    ).join('');
+
+    const counts = {};
+    entries.forEach(e => { counts[e.flavour] = (counts[e.flavour] || 0) + 1; });
+    const sortedFlavours = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
+
+    printSummary.innerHTML = sortedFlavours.map(f =>
+      '<div>' + f + ': <strong>' + counts[f] + '</strong></div>'
+    ).join('') || '<div>No entries yet.</div>';
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+</script>
+
+</body>
+</html>
