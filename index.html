@@ -57,36 +57,49 @@
   }
 
   .card{
+    position: relative;
     background: var(--cream);
     border-radius: 22px;
     box-shadow: 0 18px 40px rgba(90, 10, 50, 0.25);
     overflow: hidden;
   }
 
-  .tabs{
-    display: flex;
-  }
-
-  .tab{
-    flex: 1;
-    padding: 16px 10px;
-    text-align: center;
-    font-family: 'Baloo 2', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    background: #f6e6da;
-    color: var(--ink-soft);
+  .icon-btn{
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    opacity: 0.45;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    z-index: 5;
+    transition: opacity 0.15s ease, background 0.15s ease;
   }
 
-  .tab.active{
-    background: var(--cream);
-    color: var(--pink-deep);
+  .icon-btn:hover{
+    opacity: 1;
+    background: #f6e6da;
+  }
+
+  .icon-btn svg{
+    width: 17px;
+    height: 17px;
+  }
+
+  #backIconBtn{
+    right: auto;
+    left: 14px;
   }
 
   .panel{
-    padding: 26px 26px 30px;
+    padding: 46px 26px 30px;
   }
 
   .panel.hidden{ display:none; }
@@ -287,10 +300,12 @@
   </div>
 
   <div class="card">
-    <div class="tabs">
-      <button class="tab active" id="tabSignup" onclick="showPanel('signup')">Sign Up</button>
-      <button class="tab" id="tabList" onclick="showPanel('list')">Team List</button>
-    </div>
+    <button class="icon-btn" id="teamIconBtn" onclick="showPanel('list')" aria-label="Team list (staff only)" title="Team list">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
 
     <div class="panel" id="panelSignup">
       <label for="fName">Full Name</label>
@@ -305,6 +320,12 @@
     </div>
 
     <div class="panel hidden" id="panelList">
+      <button class="icon-btn" id="backIconBtn" onclick="showPanel('signup')" aria-label="Back to sign up" title="Back">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
       <div id="lockGate" style="padding: 6px 0 4px;">
         <label for="adminPass" style="margin-top:0;">Team access password</label>
         <input type="text" id="adminPass" placeholder="Enter password" autocomplete="off" onkeydown="if(event.key==='Enter'){checkPassword();}">
@@ -379,26 +400,20 @@
   function showPanel(which){
     const signupPanel = document.getElementById('panelSignup');
     const listPanel = document.getElementById('panelList');
-    const tabSignup = document.getElementById('tabSignup');
-    const tabList = document.getElementById('tabList');
 
     if(which === 'signup'){
       signupPanel.classList.remove('hidden');
       listPanel.classList.add('hidden');
-      tabSignup.classList.add('active');
-      tabList.classList.remove('active');
     } else {
       signupPanel.classList.add('hidden');
       listPanel.classList.remove('hidden');
-      tabList.classList.add('active');
-      tabSignup.classList.remove('active');
       if(unlocked){
         loadEntries();
       }
     }
   }
 
-  const TEAM_PASSWORD = 'crazy@admin';
+  const TEAM_PASSWORD = 'flavour@admin';
   let unlocked = false;
 
   function checkPassword(){
