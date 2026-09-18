@@ -276,6 +276,8 @@
   }
 </style>
 </head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <body>
 
 <div class="wrap">
@@ -316,7 +318,7 @@
           <span class="count-pill" id="countPill">0 people</span>
         </div>
         <div id="listBody"></div>
-        <button class="export-btn" onclick="window.print()">Export to PDF</button>
+        <button class="export-btn" onclick="exportPDF()">Export to PDF</button>
       </div>
     </div>
   </div>
@@ -509,6 +511,52 @@
     ).join('') || '<div>No entries yet.</div>';
   }
 
+  async function exportPDF(){
+    const entries = await fetchAllEntries();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(221, 1, 67);
+    doc.text('Crazy Cravings - Ice Cream Day', 14, 18);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text('Flavour sign-up list', 14, 25);
+
+    const rows = entries.map((e, i) => [i + 1, e.name, e.flavour]);
+    doc.autoTable({
+      startY: 32,
+      head: [['#', 'Name', 'Flavour']],
+      body: rows,
+      headStyles: { fillColor: [221, 1, 67] },
+      styles: { fontSize: 10 }
+    });
+
+    const counts = {};
+    entries.forEach(e => { counts[e.flavour] = (counts[e.flavour] || 0) + 1; });
+    const sortedFlavours = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+
+    let y = doc.lastAutoTable.finalY + 14;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(221, 1, 67);
+    doc.text('Flavours to pre-scoop', 14, y);
+
+    y += 8;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(40);
+    sortedFlavours.forEach(f => {
+      doc.text(f + ': ' + counts[f], 14, y);
+      y += 6;
+    });
+
+    doc.save('crazy-cravings-icecream-day.pdf');
+  }
+
   function escapeHtml(str){
     const d = document.createElement('div');
     d.textContent = str;
@@ -520,6 +568,7 @@
   window.checkPassword = checkPassword;
   window.submitEntry = submitEntry;
   window.removeEntry = removeEntry;
+  window.exportPDF = exportPDF;
 </script>
 
 </body>
