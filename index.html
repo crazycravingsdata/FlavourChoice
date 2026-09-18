@@ -338,7 +338,25 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, deleteDoc, doc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBU_mdRE38moZAlXC-JBcEF5vNhjzvWf24",
+    authDomain: "flavour-choice.firebaseapp.com",
+    projectId: "flavour-choice",
+    storageBucket: "flavour-choice.firebasestorage.app",
+    messagingSenderId: "861843501342",
+    appId: "1:861843501342:web:89f3abe9c8d44c3f9b190f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const submissionsRef = collection(db, "submissions");
+
   const FLAVOURS = [
     "Banana","Birthday Cake","Bordeaux Cherry","Bubblegum","Chocolate",
     "Chocolate Peanut Butter","Coconut","Cookie Dough","Cookies and Cream",
@@ -413,9 +431,7 @@
     btn.textContent = 'Saving...';
 
     try{
-      const key = 'entry:' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-      const result = await window.storage.set(key, JSON.stringify({ name, flavour }), true);
-      if(!result){ throw new Error('Save failed'); }
+      await addDoc(submissionsRef, { name, flavour });
 
       confirmMsg.textContent = "You're in! " + name + " → " + flavour;
       confirmMsg.classList.add('show');
@@ -433,18 +449,12 @@
   }
 
   async function fetchAllEntries(){
-    const listing = await window.storage.list('entry:', true);
-    const keys = (listing && listing.keys) || [];
+    const snap = await getDocs(submissionsRef);
     const entries = [];
-    for(const k of keys){
-      try{
-        const r = await window.storage.get(k, true);
-        if(r && r.value){
-          const parsed = JSON.parse(r.value);
-          entries.push({ key: k, name: parsed.name, flavour: parsed.flavour });
-        }
-      } catch(e){ /* skip unreadable entry */ }
-    }
+    snap.forEach(d => {
+      const data = d.data();
+      entries.push({ key: d.id, name: data.name, flavour: data.flavour });
+    });
     entries.sort((a,b) => a.name.localeCompare(b.name));
     return entries;
   }
@@ -477,7 +487,7 @@
 
   async function removeEntry(key){
     try{
-      await window.storage.delete(key, true);
+      await deleteDoc(doc(db, "submissions", key));
       loadEntries();
     } catch(e){ console.error(e); }
   }
@@ -504,6 +514,12 @@
     d.textContent = str;
     return d.innerHTML;
   }
+
+  // Expose functions used by inline onclick handlers (needed because this is a module script)
+  window.showPanel = showPanel;
+  window.checkPassword = checkPassword;
+  window.submitEntry = submitEntry;
+  window.removeEntry = removeEntry;
 </script>
 
 </body>
